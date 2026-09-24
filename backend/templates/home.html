@@ -7,13 +7,19 @@
   <input name="aroma" type="number" step="0.1" min="0" max="10" placeholder="香气" required />
   <input name="taste" type="number" step="0.1" min="0" max="10" placeholder="滋味" required />
   <input name="liquor" type="number" step="0.1" min="0" max="10" placeholder="汤色" required />
+  <input name="ticket" placeholder="退回单号（重评必填）" />
   <button>提交</button>
+  <p class="hint">重评须填退回单号（如 TH-3），提交后该单消单；普通交评留空，不影响退回单。</p>
 </form>
 {% endif %}
 <table>
-  <thead><tr><th>批次</th><th>加权分</th><th>结论</th><th>说明</th></tr></thead>
+  <thead><tr><th>批次</th><th>加权分</th><th>结论</th><th>说明</th><th>退回</th></tr></thead>
   <tbody id="rows">
-    {% for row in rows %}{% include "_row.html" %}{% endfor %}
+    {% for row in rows %}
+      {% set open_ret = open_returns.get(row.id) %}
+      {% set last_ret = last_returns.get(row.id) %}
+      {% include "_row.html" %}
+    {% endfor %}
   </tbody>
 </table>
 {% endblock %}

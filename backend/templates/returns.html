@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block body %}
+<h2>退回链</h2>
+{% if not tickets %}<p>暂无退回单。不通过行可由审评员发起退回后，前后两笔会在这里串起来。</p>{% endif %}
+{% for t in tickets %}
+<section class="ticket" id="ticket-{{ t.id }}">
+  <h3>
+    退回单 TH-{{ t.id }}
+    {% if t.status == 'open' %}<span class="status-open">待重评</span>
+    {% else %}<span class="status-closed">已消单</span>{% endif %}
+  </h3>
+  <p>退回原因：{{ t.reason }} ｜ 发起人：{{ t.created_by }}</p>
+  <div class="chain">
+    <div class="node">
+      <strong>原笔</strong> ｜ {{ t.lot }} ｜ 香气 {{ t.aroma }} 滋味 {{ t.taste }} 汤色 {{ t.liquor }}
+      ｜ 加权 {{ t.score }} ｜ <span class="fail">{{ t.verdict }}</span>
+    </div>
+    <span class="arrow">→</span>
+    {% set reviews = reviews_by_ticket.get(t.id, []) %}
+    {% if reviews %}
+      {% for r in reviews %}
+      <div class="node">
+        <strong>新笔</strong> ｜ {{ r.lot }} ｜ 香气 {{ r.aroma }} 滋味 {{ r.taste }} 汤色 {{ r.liquor }}
+        ｜ 加权 {{ r.score }} ｜
+        <span class="{% if r.verdict == '通过' %}pass{% else %}fail{% endif %}">{{ r.verdict }}</span>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="node pending">待重评：提交审评时引用 TH-{{ t.id }} 即可在此串起新笔</div>
+    {% endif %}
+  </div>
+</section>
+{% endfor %}
+{% endblock %}

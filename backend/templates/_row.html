@@ -3,4 +3,19 @@
   <td>{{ row.score }}</td>
   <td class="{% if row.verdict == '通过' %}pass{% else %}fail{% endif %}">{{ row.verdict }}</td>
   <td>{{ row.note }}</td>
+  <td>
+    {% if row.return_id %}
+      <a href="{{ url_for('returns_page') }}#ticket-{{ row.return_id }}">重评自 TH-{{ row.return_id }}</a>
+    {% endif %}
+    {% if open_ret %}
+      <a href="{{ url_for('returns_page') }}#ticket-{{ open_ret.id }}">退回单 TH-{{ open_ret.id }} 待重评</a>
+    {% elif row.verdict == '不通过' and can_write %}
+      <form method="post" action="{{ url_for('initiate_return', cupping_id=row.id) }}" class="retform">
+        <input name="reason" placeholder="退回原因（必填）" required />
+        <button>发起退回</button>
+      </form>
+    {% elif last_ret %}
+      <a href="{{ url_for('returns_page') }}#ticket-{{ last_ret.id }}">退回单 TH-{{ last_ret.id }} 已消单</a>
+    {% endif %}
+  </td>
 </tr>

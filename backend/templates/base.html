@@ -12,12 +12,24 @@
     td, th { padding: 8px; border-bottom: 1px solid #e6d3c0; text-align: left; }
     form { background: #fffaf3; padding: 12px; margin-bottom: 16px; }
     .pass { color: #166534; } .fail { color: #9f1239; }
+    .retform { background: transparent; padding: 0; margin: 0; display: flex; gap: 4px; }
+    .retform input { width: 9em; }
+    .ticket { background: #fffaf3; border: 1px solid #e6d3c0; padding: 12px; margin-bottom: 14px; }
+    .ticket h3 { margin-top: 0; }
+    .chain { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .node { background: #fff; border: 1px solid #e6d3c0; padding: 8px; }
+    .node.pending { color: #8a6d54; border-style: dashed; }
+    .arrow { font-size: 20px; }
+    .status-open { color: #b45309; } .status-closed { color: #166534; }
+    .hint { color: #8a6d54; font-size: 0.9em; }
   </style>
 </head>
 <body>
   <header>
     <strong>茶叶拼配审评台</strong>
     {% if session.user %}
+      <a href="{{ url_for('home') }}">审评台</a>
+      <a href="{{ url_for('returns_page') }}">退回链</a>
       <span>{{ session.user }}</span>
       <a href="{{ url_for('logout') }}">退出</a>
     {% endif %}

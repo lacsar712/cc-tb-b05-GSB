@@ -33,6 +33,18 @@ def main():
             created_by text NOT NULL
         )"""
     )
+    cur.execute(
+        """CREATE TABLE IF NOT EXISTS return_tickets (
+            id serial PRIMARY KEY,
+            cupping_id int NOT NULL REFERENCES cuppings(id),
+            reason text NOT NULL,
+            status text NOT NULL DEFAULT 'open',
+            created_by text NOT NULL
+        )"""
+    )
+    cur.execute(
+        "ALTER TABLE cuppings ADD COLUMN IF NOT EXISTS return_id int REFERENCES return_tickets(id)"
+    )
     cur.execute("SELECT COUNT(*) FROM cuppings")
     if cur.fetchone()[0] == 0:
         for lot, aroma, taste, liquor in (("春茶-A", 8, 8, 7), ("夏茶-C", 5, 4, 6)):
