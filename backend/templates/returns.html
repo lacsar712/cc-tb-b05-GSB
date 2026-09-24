@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>退回链</h1>
+<p class="by">每张退回单串联原审评行与引用该单号的重评行；普通交评不在此列。</p>
+{% if not chains %}
+  <p>暂无退回记录。</p>
+{% endif %}
+{% for chain in chains %}
+  {% set ret = chain.ret %}
+  {% set origin = chain.origin %}
+  {% set review = chain.review %}
+  <div class="chain">
+    <div class="chain-head">
+      退回单 {{ ret.return_no }}
+      <span class="status {% if ret.status == 'open' %}st-open{% else %}st-closed{% endif %}">
+        {% if ret.status == 'open' %}待重评{% else %}已消单{% endif %}
+      </span>
+    </div>
+    <div class="chain-meta">
+      退回原因：{{ ret.reason }} ｜ 发起人：{{ ret.created_by }} ｜ {{ ret.created_at.strftime('%Y-%m-%d %H:%M') }}
+    </div>
+
+    {% if origin %}
+    <div class="chain-node">
+      <strong>原审评行 #{{ origin.id }}（旧笔）</strong>
+      <p>批次 {{ origin.lot }} ｜ 香气 {{ origin.aroma }} ｜ 滋味 {{ origin.taste }} ｜ 汤色 {{ origin.liquor }}</p>
+      <p>加权分 <b>{{ origin.score }}</b>，结论
+        <span class="{% if origin.verdict == '通过' %}pass{% else %}fail{% endif %}">{{ origin.verdict }}</span>
+        <span class="by">审评人 {{ origin.created_by }}</span>
+      </p>
+    </div>
+    {% endif %}
+
+    <div class="arrow">↓ 引用 {{ ret.return_no }} 重评</div>
+
+    {% if review %}
+    <div class="chain-node new">
+      <strong>重评行 #{{ review.id }}（新笔）</strong>
+      <p>批次 {{ review.lot }} ｜ 香气 {{ review.aroma }} ｜ 滋味 {{ review.taste }} ｜ 汤色 {{ review.liquor }}</p>
+      <p>加权分 <b>{{ review.score }}</b>，结论
+        <span class="{% if review.verdict == '通过' %}pass{% else %}fail{% endif %}">{{ review.verdict }}</span>
+        <span class="by">审评人 {{ review.created_by }}</span>
+      </p>
+    </div>
+    {% else %}
+    <div class="chain-node pending">重评行尚未提交——在审评台提交时引用单号 {{ ret.return_no }}</div>
+    {% endif %}
+  </div>
+{% endfor %}
+{% endblock %}

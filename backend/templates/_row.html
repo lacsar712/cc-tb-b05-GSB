@@ -1,6 +1,28 @@
-<tr>
+<tr id="cupping-{{ row.id }}">
   <td>{{ row.lot }}</td>
   <td>{{ row.score }}</td>
   <td class="{% if row.verdict == '通过' %}pass{% else %}fail{% endif %}">{{ row.verdict }}</td>
-  <td>{{ row.note }}</td>
+  <td>
+    {{ row.note }}
+    {% if row.ref_return_no %}<div class="ref">重评引用 {{ row.ref_return_no }}</div>{% endif %}
+  </td>
+  {% if can_write %}
+  <td>
+    {% if row.verdict != '通过' %}
+      {% if row.open_return_no %}
+        <div class="open-return">{{ row.open_return_no }}</div>
+        <div class="reason">退回原因：{{ row.open_return_reason }}</div>
+        <div class="reason">待重评，提交时引用该单号</div>
+      {% elif row.any_return_no %}
+        <div class="ref">已重评（{{ row.any_return_no }}）</div>
+      {% else %}
+        <form method="post" action="{{ url_for('create_return', cupping_id=row.id) }}"
+              data-replace="#cupping-{{ row.id }}">
+          <input name="reason" placeholder="退回原因（必填）" required />
+          <button>发起退回</button>
+        </form>
+      {% endif %}
+    {% endif %}
+  </td>
+  {% endif %}
 </tr>
